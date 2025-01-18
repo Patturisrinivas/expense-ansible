@@ -2,9 +2,9 @@
   hosts: mysql
   become: yes 
   vars:
-    mysql_root_password: ExpenseApp@
+    mysql_root_password: ExpenseApp@1
   tasks:
-  - name: Install MySQL libraries
+  - name: install MySQL libraries
     ansible.builtin.pip:
       name: "{{ item }}"
       executable: pip3.9
@@ -26,7 +26,7 @@
   - name: connect to mysql server
     community.mysql.mysql_info:
      login_user: root
-     login_password: ExpenseApp@1
+     login_password: "{{ mysql_root_password }}"
      login_host: mysql.10cloud.tech
     register: mysql_info
     ignore_errors: true
