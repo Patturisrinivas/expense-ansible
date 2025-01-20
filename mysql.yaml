@@ -3,6 +3,7 @@
   become: yes
   vars:
    mysql_root_password: ExpenseApp@1
+   mysql_host_details: mysql.10cloud.tech
 
   tasks:
   - name: Install MySQL libraries
@@ -28,7 +29,7 @@
     community.mysql.mysql_info:
      login_user: root
      login_password: "{{ mysql_root_password }}"
-     login_host: "mysql.10cloud.tech"
+     login_host: "{{ mysql_host_details }}"
     register: mysql_info
     ignore_errors: true
 
