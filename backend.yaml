@@ -40,3 +40,16 @@
     community.general.npm:
       path: /app
 
+  - name: copy backend service
+    ansible.builtin.copy: 
+      src: backend.service
+      dest: /etc/systemd/system/backend.service
+
+  - name: import mysql data
+    community.mysql.mysql_db:
+      state: import
+      name: all
+      login_user: root
+      login_password: ExpenseApp@1
+      login_password: mysql.10cloud.tech
+      target: /app/schema/backend.sql
