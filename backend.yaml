@@ -2,7 +2,7 @@
   hosts: backend
   become: yes
   vars:
-    my_sql_password: ExpenseApp@1
+    mysql_root_password: ExpenseApp@1
     host_details: mysql.10cloud.tech
     # database_name: expense_db
   tasks:
