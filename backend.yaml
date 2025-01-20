@@ -3,7 +3,7 @@
   become: yes
   vars:
     mysql_root_password: ExpenseApp@1
-    host_details: mysql.10cloud.tech
+    mysql_host_details: mysql.10cloud.tech
     # database_name: expense_db
   tasks:
     - name: Installing the pre-required Python packages
