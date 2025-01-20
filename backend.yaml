@@ -45,11 +45,18 @@
         src: /tmp/backend.zip
         dest: /app
         remote_src: yes
-    - name: Installing backend dependencies
-      ansible.builtin.command:
-        cmd: npm install
-        args:
-          chdir: /app
+    - name: install nodejs
+      ansible.builtin.package:
+       name: "{{ item }}"
+       state: present
+      loop:
+       - nodejs
+       - mysql
+    # - name: Installing backend dependencies
+    #   ansible.builtin.command:
+    #     cmd: npm install
+    #     args:
+    #       chdir: /app
     - name: Copy backend service configuration
       ansible.builtin.copy:
         src: backend.service
