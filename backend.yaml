@@ -6,7 +6,7 @@
     host_details: mysql.10cloud.tech
   tasks:
     - name: installing the pre-required softwares
-      ansible.bulitin.pip:
+      ansible.builtin.pip:
         name:
           - PyMySQL
           - cryptography
