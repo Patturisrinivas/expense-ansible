@@ -1,76 +1,65 @@
-- name: Configuration of Backend
+- name: cofiguration backend
   hosts: backend
   become: yes
-  #vars:
-    #mysql_root_password: ExpenseApp@1
-    #mysql_host_details: mysql.10cloud.tech
-    # database_name: expense_db
   tasks:
-    - name: Installing the pre-required Python packages
-      ansible.builtin.pip:
-        name:
-          - PyMySQL
-          - cryptography
-        executable: pip3.9
-    - name: Disabling the default Node.js version
-      ansible.builtin.command:
-        cmd: dnf module disable nodejs -y
-    - name: Enabling Node.js version 20
-      ansible.builtin.command:
-        cmd: dnf module enable nodejs:20 -y
-    - name: Installing Node.js and MySQL
-      ansible.builtin.package:
-        name:
-          - nodejs
-          - mysql
-        state: present
-    - name: Enabling and starting backend service
-      ansible.builtin.service:
-        name: backend
-        state: started
-        enabled: yes
-    - name: Create 'expense' user
-      ansible.builtin.user:
-        name: expense
-    - name: Create the application directory
-      ansible.builtin.file:
-        path: /app
-        state: directory
-    - name: Download the backend code
-      ansible.builtin.get_url:
-        url: https://expense-builds.s3.us-east-1.amazonaws.com/expense-backend-v2.zip
-        dest: /tmp/backend.zip
-    - name: Extract the backend code
-      ansible.builtin.unarchive:
-        src: /tmp/backend.zip
-        dest: /app
-        remote_src: yes
-    - name: install nodejs
-      ansible.builtin.package:
-       name: "{{ item }}"
-       state: present
-      loop:
-       - nodejs
-       - mysql
-    # - name: Installing backend dependencies
-    #   ansible.builtin.command:
-    #     cmd: npm install
-    #     args:
-    #       chdir: /app
-    - name: Copy backend service configuration
-      ansible.builtin.copy:
-        src: backend.service
-        dest: /etc/systemd/system/backend.service
-    - name: import mysql data
-      community.mysql.mysql_db:
-       state: import
-       name: all
-       login_user: root
-       login_password: ExpenseApp@1
-       login_host: mysql.10cloud.tech
-       target: /app/schema/backend.sql
-    - name: Reload and restart the backend service
-      ansible.builtin.systemd:
-        daemon_reload: true
-        state: restarted
-        name: backend
+  - name: disabling nodejs
+    ansible.builtin.dnf:
+     name: nodejs
+     state: absent
+  - name: enable nodejs
+    ansible.builtin.dnf:
+     name: nodejs
+     state: present
+  - name: install nodejs
+    ansible.builtin.dnf:
+     name: "{{ item }}"
+     state: present
+    loop:
+    - nodejs
+    - mysql
+  - name: Create a directory
+    ansible.builtin.file:
+     path: /app
+     state: directory
+  - name: creat useradd expense
+    ansible.builtin.user:
+     name: expense
+     state: present
+  - name: Download application
+    ansible.builtin.get_url:
+     url: https://expense-builds.s3.us-east-1.amazonaws.com/expense-backend-v2.zip
+     dest: /tmp/backend.zip
+  - name: Unarchive a file
+    ansible.builtin.unarchive:
+     src: /tmp/backend.zip
+     dest: /app
+     remote_src: yes
+  - name: Install dependencies
+    community.general.npm:
+     name: npm
+     path: /app
+  - name: setup expense backend server
+    ansible.builtin.copy:
+     src: backend.service
+     dest: /etc/systemd/system/backend.service
+  - name: install python libs
+    ansible.builtin.pip:
+     name: "{{ item }}"
+     executable: pip3.9
+    loop:
+    - PyMySQL
+    - cryptography
+  - name: import sql data
+    community.mysql.mysql_db:
+     state: import
+     name: all
+     login_host: mysql.10cloud.tech
+     login_user: root
+     login_password: ExpenseApp@1
+     target: /app/schema/backend.sql
+  - name: daemon reload and restart service
+    ansible.builtin.systemd_service:
+     enabled: true
+     state: restarted
+     daemon_reload: true
+     name: backend
