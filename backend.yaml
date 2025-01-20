@@ -14,7 +14,7 @@
     - name: disabling the nodejs default ones
       ansible.builtin.command: dnf module disable nodejs -y
     - name: enabling of required level version of nodejs
-      ansible.bulitin.command: dnf module enable nodejs:20 -y
+      ansible.builtin.command: dnf module enable nodejs:20 -y
     - name: installation of nodejs
       ansible.builtin.package:
         name: "{{item}}"
