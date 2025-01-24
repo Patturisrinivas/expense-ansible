@@ -3,8 +3,6 @@
   become: yes
   vars:
    mysql_root_password: ExpenseApp@1
-   mysql_host_details: mysql.10cloud.tech
-
   tasks:
   - name: Install MySQL libraries
     ansible.builtin.pip:
